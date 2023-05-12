@@ -4,13 +4,14 @@
 
 **jobs**: 'scraping' de vagas;
 
-**spotify**:'scripts' do *título*/*artista* tocados no Spotify;
+**spotify**: 'scripts' do *título*/*artista* tocados no Spotify;
 
 **weather**: 'scraping' do tempo;
 
 > Icons: **Freepik**
 
 > (adapted) Spotify scripts: **github.com/Madh93/conky-spotify**
+
 
 
 ## :bulb: Autor
