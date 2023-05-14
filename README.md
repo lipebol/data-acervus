@@ -10,7 +10,7 @@
 
 > Icons: **Freepik**
 
-> Spotify scripts: **github.com/Madh93/conky-spotify** (adapted)
+> Spotify script: **github.com/Madh93/conky-spotify** (example)
 
 
 
