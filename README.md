@@ -4,7 +4,7 @@
 
 **jobs**: 'scraping' de vagas;
 
-**spotify**: 'scripts' do *título*/*artista* tocados no Spotify;
+**spotify**: 'script' para *título/artista/thumbnail* do Spotify;
 
 **weather**: 'scraping' do tempo;
 
