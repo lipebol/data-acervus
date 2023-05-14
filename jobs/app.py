@@ -41,11 +41,9 @@ def reportScrape(url):
     report = []
     n = 0
     while n < len(a):
-        i = a[n]['aria-label'].split("Ir para ")[1]
+        i = a[n]['aria-label'].split("Ir para Vaga ")[1]
         if "|" in i:
             i = i.split(" | ")[1]
-        if "Vaga " in i:
-            i = i.split("Vaga ")[1]
         report.append(i)
         n += 1
 
