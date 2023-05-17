@@ -27,27 +27,30 @@ def App():
         with open(f'{directory}/trackid', 'w') as file:
             file.write("")
     bus = dbus.SessionBus()
+    file = open(f'{directory}/trackid').read().strip()
     try:
         spotify = bus.get_object('org.mpris.MediaPlayer2.spotify', '/org/mpris/MediaPlayer2')
         iface = dbus.Interface(spotify, 'org.freedesktop.DBus.Properties')
         props = iface.Get('org.mpris.MediaPlayer2.Player', 'Metadata')
     except dbus.exceptions.DBusException:
-        source = f'{directory}/transparent.png'
-        destination = f'{directory}/image/current.png'
-        shutil.copyfile(source, destination)
+        if file != "":
+            with open(f'{directory}/trackid', 'w') as file:
+                file.write("")
+            source = f'{directory}/transparent.png'
+            destination = f'{directory}/image/current.png'
+            shutil.copyfile(source, destination)
         print("")
         print("")
     else:
         strs = ("mpris:", "xesam:")
         toJSON = json.dumps(props).replace(strs[0], "").replace(strs[1], "")
         metadata = json.loads(toJSON)
-        file = open(f'{directory}/trackid').read().strip()
         if file !=  metadata['trackid']:
             with open(f'{directory}/trackid', 'w') as file:
                 file.write(metadata['trackid'])
             imgurl = metadata['artUrl']
             ScrapeImage(imgurl, directory)
-        print(metadata['artist'][0])
         print(metadata['title'])
+        print(metadata['artist'][0])
 
 App()
