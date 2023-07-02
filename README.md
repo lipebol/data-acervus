@@ -7,12 +7,10 @@
 </p>
 
 **jobs**: alerta de vagas do site da [**Gupy**](https://portal.gupy.io/);
-> *filtre suas preferências, e inclua a 'url' no arquivo **urls**;*
 
 **spotify**: *título/artista/thumbnail* do Spotify;
 
-**weather**: tempo;
-> *'região, Cidade' no arquivo **region**;*
+**weather**: Temperatura, Chuva, Umidade do Ar e Velocidade do Vento;
 
 > Icons: **Freepik**
 
