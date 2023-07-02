@@ -10,7 +10,7 @@
 
 **spotify**: *título/artista/thumbnail* do Spotify;
 
-**weather**: Temperatura, Chuva, Umidade do Ar e Velocidade do Vento;
+**weather**: temperatura, chuva, umidade do ar e velocidade do vento;
 
 > Icons: **Freepik**
 
