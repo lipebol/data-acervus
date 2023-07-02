@@ -2,16 +2,21 @@
         for_Conky
 </h1>
 
-**jobs**: 'scraping' de vagas;
+<p align="center">
+	<img alt="for_Conky" src="https://res.cloudinary.com/dfph6kr4e/image/upload/v1688260975/for_Conky_yow3v3.gif">
+</p>
 
-**spotify**: 'script' para *título/artista/thumbnail* do Spotify;
+**jobs**: alerta de vagas do site da [**Gupy**](https://portal.gupy.io/);
+> *filtre suas preferências, e inclua a 'url' no arquivo **urls**;*
 
-**weather**: 'scraping' do tempo;
+**spotify**: *título/artista/thumbnail* do Spotify;
+
+**weather**: tempo;
+> *'região, Cidade' no arquivo **region**;*
 
 > Icons: **Freepik**
 
-> Spotify script: **github.com/Madh93/conky-spotify** (example)
-
+> **github.com/Madh93/conky-spotify** (concept)
 
 
 ## :bulb: Autor
