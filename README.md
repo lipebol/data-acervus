@@ -2,10 +2,6 @@
         for_Conky
 </h1>
 
-<p align="center">
-	<img alt="for_Conky" src="https://res.cloudinary.com/dfph6kr4e/image/upload/v1688260975/for_Conky_yow3v3.gif">
-</p>
-
 **jobs**: alerta de vagas do site da [**Gupy**](https://portal.gupy.io/);
 
 **spotify**: *título/artista/thumbnail* do Spotify;
