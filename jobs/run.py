@@ -2,8 +2,9 @@
 
 from src.jobs import Jobs
 
-def App():
 
-    Jobs()
+app = Jobs()
 
-App()
+
+if __name__ == "__main__":
+    app.run()
