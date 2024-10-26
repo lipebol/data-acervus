@@ -1,14 +1,7 @@
 <h1 align="center">
-        for_Conky
+        spotifEx
 </h1>
 
-**jobs**: alerta de vagas do site da [**Gupy**](https://portal.gupy.io/);
-
-**spotify**: *título/artista/thumbnail* do Spotify;
-
-**weather**: temperatura, chuva, umidade do ar e velocidade do vento;
-
-> Icons: **Freepik**
 
 > **github.com/Madh93/conky-spotify** (concept)
 
