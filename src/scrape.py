@@ -62,8 +62,12 @@ class Scrape:
         return self.__metadata
 
 
-    def _Image(self) -> bytes or bool:
-        return self._res_content(get(url=self.metadata['artUrl'], headers=self.headers))
+    def image(self) -> bytes or bool:
+        try:
+            return self._res_content(get(url=self.__metadata['artUrl'], headers=self.headers))
+        except Exception as error:
+            print(f"{error} in: @{currentframe().f_code.co_name}")
+            return False
 
 
     def _res_content(self, request: object) -> bytes or bool:
