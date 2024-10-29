@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from inspect import currentframe
 from os import getenv
 from requests import get
+from system import System
 
 
 class Scrape:
@@ -10,6 +11,7 @@ class Scrape:
     def __init__(self, metadata: dict) -> None:
         self.headers = literal_eval(getenv('HEADERS'))
         self.__metadata = metadata
+        self._System = System()
     
 
     def info(self) -> dict or bool:
@@ -46,7 +48,7 @@ class Scrape:
                     }
             return False
         except Exception as error:
-            print(f"{error} in: @{currentframe().f_code.co_name}")
+            self._System.notify(f"{error} in: @{currentframe().f_code.co_name}")
             return False
 
 
@@ -66,7 +68,7 @@ class Scrape:
         try:
             return self._res_content(get(url=self.__metadata['artUrl'], headers=self.headers))
         except Exception as error:
-            print(f"{error} in: @{currentframe().f_code.co_name}")
+            self._System.notify(f"{error} in: @{currentframe().f_code.co_name}")
             return False
 
 
