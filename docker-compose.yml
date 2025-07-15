@@ -1,0 +1,36 @@
+### Never send your "passwords" in Production ###
+
+services:
+  spark:
+    env_file: .env
+    build:
+      context: ${SPARK_PATH}
+      dockerfile: ${DEFAULT_BUILD}
+    tty: true
+    stdin_open: true
+    image: ${SPARK_IMAGE}
+    container_name: ${SPARK_NAME}
+    restart: ${DEFAULT_RESTART_MODE}
+    ports:
+      - ${SPARK_PORT_MASTER}
+      - ${SPARK_PORT_MASTER_UI}
+      - ${SPARK_PORT_DRIVER_UI}
+      - ${SPARK_PORT_EVENT_LOGGING}
+      - ${SPARK_PORT_REST}
+    volumes:
+      - ${SPARK_SYNC_VOLUME}
+    working_dir: ${SPARK_WORKDIR}
+    #networks:
+    #  - ${DEFAULT_NETWORK}
+    deploy:
+      resources:
+        limits:
+          cpus: ${DEFAULT_CORE}
+          memory: ${DEFAULT_MEM}
+    memswap_limit: ${DEFAULT_MEM_SWAP}
+
+
+networks:
+  data-acervus-network:
+    external: true
+    name: ${DEFAULT_NETWORK}
