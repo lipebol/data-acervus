@@ -4,24 +4,24 @@ services:
   spark:
     env_file: .env
     build:
-      context: ${SPARK_PATH}
+      context: ./spark
       dockerfile: ${DEFAULT_BUILD}
     tty: true
     stdin_open: true
-    image: ${SPARK_IMAGE}
-    container_name: ${SPARK_NAME}
+    image: spark/v1
+    container_name: sparkEx
     restart: ${DEFAULT_RESTART_MODE}
     ports:
-      - ${SPARK_PORT_MASTER}
-      - ${SPARK_PORT_MASTER_UI}
-      - ${SPARK_PORT_DRIVER_UI}
-      - ${SPARK_PORT_EVENT_LOGGING}
-      - ${SPARK_PORT_REST}
+      - 7077:7077 # master
+      - 8081:8080 # master-ui
+      - 4040:4040 # driver-ui
+      - 7777:7777 # event-logging
+      - 6066:6066 # rest
     volumes:
-      - ${SPARK_SYNC_VOLUME}
-    working_dir: ${SPARK_WORKDIR}
-    #networks:
-    #  - ${DEFAULT_NETWORK}
+      - ./spark:/sparkEx
+    working_dir: /sparkEx
+    networks:
+     - ${DEFAULT_NETWORK}
     deploy:
       resources:
         limits:
@@ -29,6 +29,36 @@ services:
           memory: ${DEFAULT_MEM}
     memswap_limit: ${DEFAULT_MEM_SWAP}
 
+  minio:
+    env_file: .env
+    command: server /mnt/data --console-address :9090
+    image: quay.io/minio/minio:latest
+    container_name: minEx
+    restart: ${DEFAULT_RESTART_MODE}
+    environment:
+      MINIO_ROOT_USER: ${DEFAULT_USER}
+      MINIO_CONFIG_ENV_FILE: /etc/config.env
+    #expose:
+    #  - ${MINEX_PORT}
+    ports:
+      - 9000:9000 # main
+      - 9090:9090 # admin
+    volumes:
+      - ./minio/data:/mnt/data
+      - ./minio/.env:/etc/config.env
+    networks:
+     - ${DEFAULT_NETWORK}
+    healthcheck:
+      test: curl -f http://localhost:9000/minio/health/live
+      interval: ${DEFAULT_INTERVAL}
+      timeout: ${DEFAULT_TIMEOUT}
+      retries: ${DEFAULT_RETRIES}
+    deploy:
+      resources:
+        limits:
+          cpus: ${DEFAULT_CORE}
+          memory: ${DEFAULT_MEM}
+    memswap_limit: ${DEFAULT_MEM_SWAP}
 
 networks:
   data-acervus-network:
