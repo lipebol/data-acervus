@@ -9,7 +9,7 @@ services:
     tty: true
     stdin_open: true
     image: spark/v1
-    container_name: sparkEx
+    container_name: spark
     restart: ${DEFAULT_RESTART_MODE}
     ports:
       - 7077:7077 # master
@@ -18,8 +18,36 @@ services:
       - 7777:7777 # event-logging
       - 6066:6066 # rest
     volumes:
-      - ./spark:/sparkEx
-    working_dir: /sparkEx
+      - ./spark:/srv/spark
+    working_dir: /srv/spark
+    networks:
+     - ${DEFAULT_NETWORK}
+    deploy:
+      resources:
+        limits:
+          cpus: ${DEFAULT_CORE}
+          memory: ${DEFAULT_MEM}
+    memswap_limit: ${DEFAULT_MEM_SWAP}
+
+  drill:
+    env_file: .env
+    build:
+      context: ./drill
+      dockerfile: ${DEFAULT_BUILD}
+    tty: true
+    stdin_open: true
+    image: drill/v1
+    container_name: drillEx
+    restart: ${DEFAULT_RESTART_MODE}
+    ports:
+      - 8047:8047 # web/rest
+      - 31010:31010 # jdbc
+    volumes:
+      - ./drill/conf/drill-override.conf:/opt/drill/conf/drill-override.conf
+      - ./drill/conf/storage-plugins-override.conf:/opt/drill/conf/storage-plugins-override.conf
+      - ./drill/files:/.data/files
+      - ./drill/tables:/.data/tables
+    working_dir: /opt/drill
     networks:
      - ${DEFAULT_NETWORK}
     deploy:
