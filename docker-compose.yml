@@ -88,6 +88,71 @@ services:
           memory: ${DEFAULT_MEM}
     memswap_limit: ${DEFAULT_MEM_SWAP}
 
+  zookeeper:
+    image: bitnami/zookeeper:latest
+    container_name: zookeeper
+    restart: ${DEFAULT_RESTART_MODE}
+    environment:
+      ALLOW_ANONYMOUS_LOGIN: yes
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    expose:
+      - 2181
+    networks:
+      - ${DEFAULT_NETWORK}
+    deploy:
+      resources:
+        limits:
+          cpus: ${DEFAULT_CORE}
+          memory: ${DEFAULT_MEM}
+    memswap_limit: ${DEFAULT_MEM_SWAP}
+    
+  coordinator:
+    image: dremio/dremio-oss:latest
+    container_name: dremio-coordinator
+    restart: ${DEFAULT_RESTART_MODE}
+    expose:
+      - 31010
+      - 32010
+      - 45678
+    ports:
+      - 9047:9047
+    volumes:
+      - ./dremio/coordinator/dremio-env:/opt/dremio/conf/dremio-env
+      - ./dremio/coordinator/dremio.conf:/opt/dremio/conf/dremio.conf
+      - ./dremio/data:/opt/dremio/data/dremio_data
+    networks:
+      - ${DEFAULT_NETWORK}
+    deploy:
+      resources:
+        limits:
+          cpus: ${DEFAULT_CORE}
+          memory: ${DEFAULT_MEM}
+    memswap_limit: ${DEFAULT_MEM_SWAP}
+    depends_on:
+      - zookeeper
+
+  executor:
+    image: dremio/dremio-oss:latest
+    restart: ${DEFAULT_RESTART_MODE}
+    expose:
+      - 45678
+    volumes:
+      - ./dremio/executor/dremio-env:/opt/dremio/conf/dremio-env
+      - ./dremio/executor/dremio.conf:/opt/dremio/conf/dremio.conf
+      - ./dremio/data:/opt/dremio/data/dremio_data
+    networks:
+      - ${DEFAULT_NETWORK}
+    deploy:
+      resources:
+        limits:
+          cpus: ${DEFAULT_CORE}
+          memory: ${DEFAULT_MEM}
+    memswap_limit: ${DEFAULT_MEM_SWAP}
+    depends_on:
+      - zookeeper
+      - coordinator
+
 networks:
   data-acervus-network:
     external: true
