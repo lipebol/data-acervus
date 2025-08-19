@@ -1,16 +1,38 @@
 ### Never send your "passwords" in Production ###
 
+x-base: &common
+  env_file: .env
+  build:
+    dockerfile: Dockerfile
+  restart: always
+  networks:
+    - lipebol-network
+  deploy:
+    resources:
+      limits:
+        cpus: 2
+        memory: 2048M
+        pids: 200
+  memswap_limit: 4096M
+  logging:
+    options:
+      max-size: 10M
+      max-file: 3
+  security_opt:
+    - no-new-privileges=true
+  environment:
+    - PUID=1000
+    - PGID=1000
+
 services:
   spark:
-    env_file: .env
+    <<: *common
     build:
       context: ./spark
-      dockerfile: ${DEFAULT_BUILD}
     tty: true
     stdin_open: true
-    image: spark/v1
-    container_name: spark
-    restart: ${DEFAULT_RESTART_MODE}
+    image: lipebol/spark:v1
+    container_name: apache-spark
     ports:
       - 7077:7077 # master
       - 8081:8080 # master-ui
@@ -20,25 +42,15 @@ services:
     volumes:
       - ./spark:/srv/spark
     working_dir: /srv/spark
-    networks:
-     - ${DEFAULT_NETWORK}
-    deploy:
-      resources:
-        limits:
-          cpus: ${DEFAULT_CORE}
-          memory: ${DEFAULT_MEM}
-    memswap_limit: ${DEFAULT_MEM_SWAP}
 
   drill:
-    env_file: .env
+    <<: *common
     build:
       context: ./drill
-      dockerfile: ${DEFAULT_BUILD}
     tty: true
     stdin_open: true
-    image: drill/v1
-    container_name: drillEx
-    restart: ${DEFAULT_RESTART_MODE}
+    image: lipebol/drill:v1
+    container_name: apache-drill
     ports:
       - 8047:8047 # web/rest
       - 31010:31010 # jdbc
@@ -48,112 +60,29 @@ services:
       - ./drill/files:/.data/files
       - ./drill/tables:/.data/tables
     working_dir: /opt/drill
-    networks:
-     - ${DEFAULT_NETWORK}
-    deploy:
-      resources:
-        limits:
-          cpus: ${DEFAULT_CORE}
-          memory: ${DEFAULT_MEM}
-    memswap_limit: ${DEFAULT_MEM_SWAP}
 
   minio:
-    env_file: .env
+    <<: *common
     command: server /mnt/data --console-address :9090
     image: quay.io/minio/minio:latest
-    container_name: minEx
-    restart: ${DEFAULT_RESTART_MODE}
+    container_name: minio
     environment:
-      MINIO_ROOT_USER: ${DEFAULT_USER}
+      MINIO_ROOT_USER: lipebol
       MINIO_CONFIG_ENV_FILE: /etc/config.env
-    #expose:
-    #  - ${MINEX_PORT}
+    expose:
+     - 9000 # main
     ports:
-      - 9000:9000 # main
       - 9090:9090 # admin
     volumes:
       - ./minio/data:/mnt/data
       - ./minio/.env:/etc/config.env
-    networks:
-     - ${DEFAULT_NETWORK}
     healthcheck:
       test: curl -f http://localhost:9000/minio/health/live
-      interval: ${DEFAULT_INTERVAL}
-      timeout: ${DEFAULT_TIMEOUT}
-      retries: ${DEFAULT_RETRIES}
-    deploy:
-      resources:
-        limits:
-          cpus: ${DEFAULT_CORE}
-          memory: ${DEFAULT_MEM}
-    memswap_limit: ${DEFAULT_MEM_SWAP}
-
-  zookeeper:
-    image: bitnami/zookeeper:latest
-    container_name: zookeeper
-    restart: ${DEFAULT_RESTART_MODE}
-    environment:
-      ALLOW_ANONYMOUS_LOGIN: yes
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    expose:
-      - 2181
-    networks:
-      - ${DEFAULT_NETWORK}
-    deploy:
-      resources:
-        limits:
-          cpus: ${DEFAULT_CORE}
-          memory: ${DEFAULT_MEM}
-    memswap_limit: ${DEFAULT_MEM_SWAP}
-    
-  coordinator:
-    image: dremio/dremio-oss:latest
-    container_name: dremio-coordinator
-    restart: ${DEFAULT_RESTART_MODE}
-    expose:
-      - 31010
-      - 32010
-      - 45678
-    ports:
-      - 9047:9047
-    volumes:
-      - ./dremio/coordinator/dremio-env:/opt/dremio/conf/dremio-env
-      - ./dremio/coordinator/dremio.conf:/opt/dremio/conf/dremio.conf
-      - ./dremio/data:/opt/dremio/data/dremio_data
-    networks:
-      - ${DEFAULT_NETWORK}
-    deploy:
-      resources:
-        limits:
-          cpus: ${DEFAULT_CORE}
-          memory: ${DEFAULT_MEM}
-    memswap_limit: ${DEFAULT_MEM_SWAP}
-    depends_on:
-      - zookeeper
-
-  executor:
-    image: dremio/dremio-oss:latest
-    restart: ${DEFAULT_RESTART_MODE}
-    expose:
-      - 45678
-    volumes:
-      - ./dremio/executor/dremio-env:/opt/dremio/conf/dremio-env
-      - ./dremio/executor/dremio.conf:/opt/dremio/conf/dremio.conf
-      - ./dremio/data:/opt/dremio/data/dremio_data
-    networks:
-      - ${DEFAULT_NETWORK}
-    deploy:
-      resources:
-        limits:
-          cpus: ${DEFAULT_CORE}
-          memory: ${DEFAULT_MEM}
-    memswap_limit: ${DEFAULT_MEM_SWAP}
-    depends_on:
-      - zookeeper
-      - coordinator
+      interval: 30s
+      timeout: 20s
+      retries: 3
 
 networks:
-  data-acervus-network:
+  lipebol-network:
     external: true
-    name: ${DEFAULT_NETWORK}
+    name: lipebol-network
